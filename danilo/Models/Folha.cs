@@ -1,12 +1,20 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace victor.Models;
 
 public class Folha
 {
-
+	public Folha(double quantidade, double valor)
+	{
+		Quantidade = quantidade;
+		Valor = valor;
+		CalcularBruto();
+		calcularFGTS();
+		calcularIr();
+		CalcularInss();
+		calcularLiquido();
+	}
 
 	public Folha()
 	{
@@ -28,49 +36,53 @@ public class Folha
 	public double Quantidade { get; set; }
 	public int Mes { get; set; }
 	public int Ano { get; set; }
+	public double Liquido { get; set; }
+	public double Bruto { get; set; }
+	public double Ir { get; set; }
+	public double Fgts { get; set; }
+	public double Inss { get; set; }
 
 	[ForeignKey("Funcionario")]
 	public int FuncionarioId { get; set; }
 	public Funcionario Funcionario { get; private set; }
 
 
-	double bruto;
+	private void CalcularBruto() =>
+		Bruto = Valor * Quantidade;
 
-	public double calcularBruto(double valor, double quantidade)
+	private void calcularIr()
 	{
-		return bruto = valor * quantidade;
+		if (Bruto <= 1903.98)
+			Ir = 0;
+		else if (Bruto <= 2826.65)
+			Ir = Bruto * .075 - 142.8;
+		else if (Bruto <= 3751.05)
+			Ir = Bruto * .15 - 354.8;
+		else if (Bruto <= 4664.68)
+			Ir = Bruto * .225 - 636.13;
+		else
+			Ir = Bruto * .275 - 869.36;
 	}
 
-	public double calcularIR(double bruto)
+	private void calcularFGTS()
 	{
-
-		if (bruto > 1903.98)
-		{
-			return 142.80;
-		}
-		else if (bruto > 2826.66)
-		{
-			return 354.80;
-		}
-		else if (bruto > 3751.06)
-		{
-			return 636.13;
-		}
-		else if (bruto > 4664.68)
-		{
-			return 869.36;
-		}
-		return 0;
+		Fgts = Bruto * (100 / 8);
 	}
 
-	public double calcularFGTS(double bruto)
+	private void CalcularInss()
 	{
-		return bruto / (8 / 100);
+		if (Bruto <= 1693.72)
+			Inss = Bruto * .08;
+		else if (Bruto <= 2822.9)
+			Inss = Bruto * .09;
+		else if (Bruto <= 5645.8)
+			Inss = Bruto * .11;
+		else
+			Inss = 621.03;
 	}
 
-	public double calcularLiquido(double bruto)
+	private void calcularLiquido()
 	{
-		double liquido = calcularBruto(Valor,Quantidade) - calcularFGTS(bruto) - calcularIR(bruto);
-		return liquido;
+		Liquido = Bruto - Ir - Fgts - Inss;
 	}
 }
