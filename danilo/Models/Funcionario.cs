@@ -8,6 +8,11 @@ public class Funcionario
 	public Funcionario()
 	{
 	}
+	public Funcionario(string nome, string cpf)
+	{
+		Nome = nome;
+		Cpf = cpf;
+	}
 
 	public Funcionario(string nome, string cpf, int id, Folha folha)
 	{

@@ -31,4 +31,12 @@ public class Folha
 	[ForeignKey("Funcionario")]
 	public int FuncionarioId { get; set; }
 	public Funcionario Funcionario { get; private set; }
+
+
+	
+
+
+
+
+
 }
