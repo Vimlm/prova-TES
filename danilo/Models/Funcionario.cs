@@ -1,34 +1,25 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace victor.Models;
-
-public class Funcionario
+namespace victor.Models
 {
-	public Funcionario()
+	public class Funcionario
 	{
+		public Funcionario()
+		{
+		}
+
+		public Funcionario(string nome, string cpf)
+		{
+			Id = Guid.NewGuid().ToString();
+			Nome = nome;
+			Cpf = cpf;
+		}
+
+		[Key]
+		public string Id { get; set; }
+		public string Nome { get; set; }
+		public string Cpf { get; set; }
+		public Folha Folha { get; set; }
 	}
-	public Funcionario(string nome, string cpf)
-	{
-		Nome = nome;
-		Cpf = cpf;
-	}
-
-	public Funcionario(string nome, string cpf, int id, Folha folha)
-	{
-		Nome = nome;
-		Cpf = cpf;
-		Id = id;
-		Folha = folha;
-	}
-
-	[Key]
-	public int Id { get; set; }
-	public string Nome { get; set; }
-	public string Cpf { get; set; }
-
-
-	[ForeignKey("Folha")]
-	public int FolhaId { get; set; }
-	public Folha Folha { get; private set; }
 }

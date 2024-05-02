@@ -10,7 +10,7 @@ using victor.Models;
 namespace victor.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240502133730_Initial")]
+    [Migration("20240502144616_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -21,15 +21,14 @@ namespace victor.Migrations
 
             modelBuilder.Entity("victor.Models.Folha", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("Id")
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("Ano")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("FuncionarioId")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("FuncionarioId")
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("Mes")
                         .HasColumnType("INTEGER");
@@ -42,29 +41,24 @@ namespace victor.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FuncionarioId");
+                    b.HasIndex("FuncionarioId")
+                        .IsUnique();
 
                     b.ToTable("Folhas");
                 });
 
             modelBuilder.Entity("victor.Models.Funcionario", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("Id")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Cpf")
                         .HasColumnType("TEXT");
-
-                    b.Property<int>("FolhaId")
-                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Nome")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("FolhaId");
 
                     b.ToTable("Funcionarios");
                 });
@@ -72,22 +66,14 @@ namespace victor.Migrations
             modelBuilder.Entity("victor.Models.Folha", b =>
                 {
                     b.HasOne("victor.Models.Funcionario", "Funcionario")
-                        .WithMany()
-                        .HasForeignKey("FuncionarioId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithOne("Folha")
+                        .HasForeignKey("victor.Models.Folha", "FuncionarioId");
 
                     b.Navigation("Funcionario");
                 });
 
             modelBuilder.Entity("victor.Models.Funcionario", b =>
                 {
-                    b.HasOne("victor.Models.Folha", "Folha")
-                        .WithMany()
-                        .HasForeignKey("FolhaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Folha");
                 });
 #pragma warning restore 612, 618

@@ -4,70 +4,49 @@ using victor.Models;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
+builder.Services.AddDbContext<AppDbContext>();
 AppDbContext dataContext = new();
 
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+//Cadastrar Funcionário
+app.MapPost("api/funcionario/cadastrar", ([FromBody] Funcionario funcionario, [FromServices] AppDbContext context) =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-
-// //Cadastrar Funcionário
-// app.MapPost("/api/funcionario/cadastrar", ([FromRoute] string nome, [FromRoute] string cpf, [FromServices] AppDbContext context) =>
-//   {
-//     Funcionario funcionario = new(nome, cpf);
-//     context.Funcionarios.Add(funcionario);
-//     context.SaveChanges();
-//     return Results.Created("Funcionário inserido com sucesso", funcionario);
-//   }
-// );
+  context.Funcionarios.Add(funcionario);
+  context.SaveChanges();
+  return Results.Created("Funcionário cadastrado com sucesso", funcionario);
+});
 
 // //Listar Funcionários
-// app.MapGet("/produto/listar", ([FromServices] AppDbContext context) =>
-// {
-//   if(context.Funcionarios.Any())
-//   {
-//     return Results.Ok(context.Funcionarios.ToList());
-//   }
-//   return Results.NotFound("Não existe funcionários cadastrados.");
-// });
+app.MapGet("/produto/listar", ([FromServices] AppDbContext context) =>
+{
+  if(context.Funcionarios.Any())
+  {
+    return Results.Ok(context.Funcionarios.ToList());
+  }
+  return Results.NotFound("Não existe funcionários cadastrados.");
+});
 
 // //Cadastrar folha
-// app.MapPost("/api/folha/cadastrar", ([FromRoute] double valor, [FromRoute] double quantidade, [FromRoute] int mes, [FromRoute] int ano, [FromRoute] int funcionario, [FromServices] AppDbContext context) =>
-//   {
-//     Folha folha = new(valor, quantidade, mes, ano, funcionario);
-//     context.Folhas.Add(folha);
-//     context.SaveChanges();
-//     return Results.Created("Folha cadastrada com sucesso", folha);
-//   }
-// );
+app.MapPost("/api/folha/cadastrar", ([FromBody] Folha folha, [FromServices] AppDbContext context) =>
+  {
+    Funcionario funcionario = new("Martins", "12332132111");
+    Folha novaFolha = new(folha.Valor, folha.Quantidade, folha.Mes, folha.Ano, funcionario);
 
-// //Listar folhas
-// app.MapGet("/api/folha/listar", ([FromServices] AppDbContext context) =>
-// {
-//   if(context.Folhas.Any())
-//   {
-//     return Results.Ok(context.Folhas.ToList());
-//   }
-//   return Results.NotFound("Não existe folhas cadastradas.");
-// });
+    context.Folhas.Add(novaFolha);
+    context.SaveChanges();
+    return Results.Created("Folha cadastrada com sucesso", folha);
+  }
+);
 
-// app.MapGet("/api/folha/buscar/{cpf}/{mes}/{ano}", ([FromRoute] string cpf, [FromRoute] string mes, [FromRoute] string ano,[FromServices] AppDbContext context) =>
-//   {
-
-//     Folha? folha = context.Folhas.Find(id);
-
-//     if (produto is null)
-//     {
-//       return Results.NotFound("Produto não encontrado.");
-//     }
-
-//     return Results.Ok(produto);
-//   }
-// );
+//Listar folhas
+app.MapGet("/api/folha/listar", ([FromServices] AppDbContext context) =>
+{
+  if(context.Folhas.Any())
+  {
+    return Results.Ok(context.Folhas.ToList());
+  }
+  return Results.NotFound("Não existe folhas cadastradas.");
+});
 app.Run();
